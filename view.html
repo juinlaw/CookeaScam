@@ -1,0 +1,45 @@
+<!-- view.html -->
+<script type="module">
+import { db } from './firebase.js';
+import { doc, getDoc, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+
+const urlParams = new URLSearchParams(location.search);
+const postId = urlParams.get("id");
+
+// 글 내용 가져오기
+const postRef = doc(db, "posts", postId);
+const postSnap = await getDoc(postRef);
+if (postSnap.exists()) {
+  const post = postSnap.data();
+  document.getElementById("title").innerText = post.title;
+  document.getElementById("content").innerText = post.content;
+}
+
+// 댓글 등록
+document.getElementById("commentBtn").addEventListener("click", async () => {
+  const comment = document.getElementById("commentInput").value;
+  await addDoc(collection(db, `posts/${postId}/comments`), {
+    text: comment,
+    createdAt: new Date()
+  });
+  alert("댓글이 등록되었습니다!");
+  location.reload();
+});
+
+// 댓글 가져오기
+const commentSnap = await getDocs(collection(db, `posts/${postId}/comments`));
+commentSnap.forEach(doc => {
+  const c = doc.data();
+  const li = document.createElement("li");
+  li.textContent = c.text;
+  document.getElementById("commentList").appendChild(li);
+});
+</script>
+
+<h2 id="title"></h2>
+<p id="content"></p>
+
+<h3>댓글</h3>
+<ul id="commentList"></ul>
+<input id="commentInput" placeholder="댓글 작성">
+<button id="commentBtn">등록</button>
