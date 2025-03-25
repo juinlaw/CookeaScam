@@ -1,0 +1,24 @@
+<!-- write.html -->
+<script type="module">
+import { db } from './firebase.js';
+import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+
+document.getElementById('submitBtn').addEventListener('click', async () => {
+  const title = document.getElementById('title').value;
+  const content = document.getElementById('content').value;
+
+  await addDoc(collection(db, "posts"), {
+    title,
+    content,
+    createdAt: serverTimestamp()
+  });
+
+  alert('글이 등록되었습니다!');
+  location.href = 'index.html';
+});
+</script>
+
+<h2>글쓰기</h2>
+<input id="title" placeholder="제목"><br>
+<textarea id="content" placeholder="내용"></textarea><br>
+<button id="submitBtn">등록</button>
