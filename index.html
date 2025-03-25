@@ -349,6 +349,23 @@
         document.addEventListener("DOMContentLoaded", updateContent);
     </script>
 
+    <!-- index.html -->
+    <script type="module">
+    import { db } from './firebase.js';
+    import { collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+    
+    const postList = document.getElementById("postList");
+    
+    const q = query(collection(db, "posts"), orderBy("createdAt", "desc"));
+    const snapshot = await getDocs(q);
+    snapshot.forEach(doc => {
+      const post = doc.data();
+      const li = document.createElement("li");
+      li.innerHTML = `<a href="view.html?id=${doc.id}">${post.title}</a>`;
+      postList.appendChild(li);
+    });
+    </script>
+    
     <!-- 📌 푸터 섹션 추가 -->
     <footer class="footer">
         <div class="container text-center">
